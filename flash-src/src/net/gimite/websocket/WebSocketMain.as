@@ -17,7 +17,7 @@ public class WebSocketMain extends Sprite implements IWebSocketLogger{
   
   private var callerUrl:String;
   private var debug:Boolean = false;
-  private var manualPolicyFileLoaded:Boolean = false;
+  private var policyLoaded:Boolean = false;
   private var webSockets:Array = [];
   private var eventQueue:Array = [];
   
@@ -44,15 +44,16 @@ public class WebSocketMain extends Sprite implements IWebSocketLogger{
   }
   
   private function loadDefaultPolicyFile(wsUrl:String):void {
-    var policyUrl:String = "xmlsocket://" + URLUtil.getServerName(wsUrl) + ":843";
+    var policyUrl:String = "xmlsocket://" + URLUtil.getServerName(wsUrl) + ":5000";
     log("policy file: " + policyUrl);
     Security.loadPolicyFile(policyUrl);
+    policyLoaded = true;
   }
   
   public function loadManualPolicyFile(policyUrl:String):void {
     log("policy file: " + policyUrl);
     Security.loadPolicyFile(policyUrl);
-    manualPolicyFileLoaded = true;
+    policyLoaded = true;
   }
   
   public function log(message:String):void {
@@ -87,14 +88,12 @@ public class WebSocketMain extends Sprite implements IWebSocketLogger{
     return eventObj;
   }
   
-  public function create(
-      webSocketId:int,
-      url:String, protocols:Array,
-      proxyHost:String = null, proxyPort:int = 0,
-      headers:String = null):void {
-    if (!manualPolicyFileLoaded) {
+  public function create(webSocketId:int, url:String, protocols:Array, proxyHost:String = null, proxyPort:int = 0, headers:String = null):void {
+    
+    if (!policyLoaded) {
       loadDefaultPolicyFile(url);
     }
+    
     var newSocket:WebSocket = new WebSocket(
         webSocketId, url, protocols, getOrigin(), proxyHost, proxyPort,
         getCookie(url), headers, this);

@@ -119,6 +119,8 @@ public class WebSocket extends EventDispatcher {
         socket = rawSocket;
       }
     }
+    
+    rawSocket.timeout = 5000;
     rawSocket.addEventListener(Event.CLOSE, onSocketClose);
     rawSocket.addEventListener(Event.CONNECT, onSocketConnect);
     rawSocket.addEventListener(IOErrorEvent.IO_ERROR, onSocketIoError);
