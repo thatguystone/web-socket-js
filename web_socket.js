@@ -98,17 +98,29 @@
    * Close this web socket gracefully.
    */
   WebSocket.prototype.close = function() {
+    var id = this.__id,
+      close = function() {
+        WebSocket.__flash.close(id);
+      };
+    
     if (this.__createTask) {
       clearTimeout(this.__createTask);
       this.__createTask = null;
       this.readyState = WebSocket.CLOSED;
+      
+      if (WebSocket.__flash == null) {
+        WebSocket.__tasks.push(close);
+      } else {
+        close();
+      }
+      
       return;
     }
     if (this.readyState == WebSocket.CLOSED || this.readyState == WebSocket.CLOSING) {
       return;
     }
     this.readyState = WebSocket.CLOSING;
-    WebSocket.__flash.close(this.__id);
+    close();
   };
 
   /**

@@ -182,8 +182,12 @@ public class WebSocket extends EventDispatcher {
       logger.error(StringUtil.substitute(
           "Fail connection by {0}: code={1} reason={2}", origin, code, reason));
     }
+    
+    socket.close();
+    
     var closeConnection:Boolean =
         code == STATUS_CONNECTION_ERROR || origin == "server";
+    
     try {
       if (readyState == OPEN && code != STATUS_CONNECTION_ERROR) {
         var frame:WebSocketFrame = new WebSocketFrame();
@@ -194,9 +198,6 @@ public class WebSocket extends EventDispatcher {
           frame.payload.writeUTFBytes(reason);
         }
         sendFrame(frame);
-      }
-      if (closeConnection) {
-        socket.close();
       }
     } catch (ex:Error) {
       logger.error("Error: " + ex.message);
