@@ -96,7 +96,7 @@ public class WebSocketMain extends Sprite implements IWebSocketLogger{
     
     var newSocket:WebSocket = new WebSocket(
         webSocketId, url, protocols, getOrigin(), proxyHost, proxyPort,
-        getCookie(url), headers, this);
+        getCookie(url), getUserAgent(), headers, this);
     newSocket.addEventListener("open", onSocketEvent);
     newSocket.addEventListener("close", onSocketEvent);
     newSocket.addEventListener("error", onSocketEvent);
@@ -132,6 +132,10 @@ public class WebSocketMain extends Sprite implements IWebSocketLogger{
     } else {
       return "";
     }
+  }
+  
+  private function getUserAgent():String {
+    return ExternalInterface.call("function() { return navigator.userAgent }");
   }
   
   /**

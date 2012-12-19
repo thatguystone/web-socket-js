@@ -55,6 +55,7 @@ public class WebSocket extends EventDispatcher {
   private var origin:String;
   private var requestedProtocols:Array;
   private var cookie:String;
+  private var userAgent:String;
   private var headers:String;
   
   private var rawSocket:Socket;
@@ -75,7 +76,7 @@ public class WebSocket extends EventDispatcher {
   public function WebSocket(
       id:int, url:String, protocols:Array, origin:String,
       proxyHost:String, proxyPort:int,
-      cookie:String, headers:String,
+      cookie:String, userAgent:String, headers:String,
       logger:IWebSocketLogger) {
     this.logger = logger;
     this.id = id;
@@ -90,6 +91,7 @@ public class WebSocket extends EventDispatcher {
     this.origin = origin;
     this.requestedProtocols = protocols;
     this.cookie = cookie;
+    this.userAgent = userAgent;
     // if present and not the empty string, headers MUST end with \r\n
     // headers should be zero or more complete lines, for example
     // "Header1: xxx\r\nHeader2: yyyy\r\n"
@@ -250,9 +252,10 @@ public class WebSocket extends EventDispatcher {
       "Origin: {3}\r\n" +
       "Sec-WebSocket-Version: 13\r\n" +
       "Cookie: {4}\r\n" +
-      "{5}" +
+      "User-Agent: {5}\r\n" +
+      "{6}" +
       "\r\n",
-      path, hostValue, key, origin, cookie, opt);
+      path, hostValue, key, origin, cookie, userAgent, opt);
     logger.log("request header:\n" + req);
     socket.writeUTFBytes(req);
     socket.flush();
